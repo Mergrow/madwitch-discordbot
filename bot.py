@@ -164,7 +164,7 @@ async def version(message):
 @client.command()
 async def embed(ctx):
     embed=discord.Embed(title="Teste", color=0xc034eb)
-    embed.set_image(url="https://scontent-gru2-2.xx.fbcdn.net/v/t39.30808-6/280959762_4978828738852024_2640395906666203588_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeH4q0uEkNKlYH_LAaVVzsIvapeQn8g8xm5ql5CfyDzGbs34m0T7V-qKYcUQAJY6MgZ6NnrKE0mvR7GP6atR3Cur&_nc_ohc=YubJQF5kIggAX9oCEfu&_nc_ht=scontent-gru2-2.xx&oh=00_AT_W-xvkkPWJPAxSVqL8QU6MghrDFgyPoAZSMkKfVlmsTg&oe=62A40925")
+    embed.set_image(url="")
     await ctx.send(embed=embed)
 
 
