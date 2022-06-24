@@ -11,6 +11,10 @@ from discord.utils import get
 from discord.ext import commands
 import os
 from datetime import timezone
+import heroku
+
+cloud = heroku.from_key('69f09501-2788-4d43-b676-ba9f024d44be')
+
 
 yaml = YAML()
 with open("config.yml", "r", encoding='utf-8') as file: #config.yml
