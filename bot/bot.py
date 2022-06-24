@@ -194,6 +194,12 @@ async def witchery(ctx):
     else:
         embed = discord.Embed(title="You can't do Witchery! :)", color=0xc034eb)
         await ctx.send(embed=embed)
+
+
+@client.command()
+async def host(ctx):
+    embed = discord.Embed(title="Hosted on __**Heroku!**__")
+    await ctx.send(embed=embed)
     
 
 client.run(bot_token)
