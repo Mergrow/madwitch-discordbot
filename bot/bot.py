@@ -17,7 +17,7 @@ yaml = YAML()
 with open("bot/config.yml", "r", encoding='utf-8') as file: #config.yml
     config = yaml.load(file)
 
-ver = ['0.1.0.1', '23/06/2022'] #versão atual do bot.
+ver = ['0.1.0.2', '23/06/2022'] #versão atual do bot.
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
 Prefix = config['Prefix']
@@ -198,7 +198,7 @@ async def witchery(ctx):
 
 @client.command()
 async def host(ctx):
-    embed = discord.Embed(title="Hosted on __**Heroku!**__")
+    embed = discord.Embed(title="Hosted on __**Heroku!**__", color=0xc034eb)
     await ctx.send(embed=embed)
     
 
