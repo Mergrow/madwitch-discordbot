@@ -195,4 +195,4 @@ async def witchery(ctx):
         await ctx.send(embed=embed)
     
 
-client.run(DISCORD_TOKEN)
+client.run(bot_token)
