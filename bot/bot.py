@@ -14,7 +14,7 @@ from datetime import timezone
 
 
 yaml = YAML()
-with open("config.yml", "r", encoding='utf-8') as file: #config.yml
+with open("bot/config.yml", "r", encoding='utf-8') as file: #config.yml
     config = yaml.load(file)
 
 ver = ['0.0.1.3', '13/08/2021'] #versão atual do bot.
