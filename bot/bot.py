@@ -17,7 +17,7 @@ yaml = YAML()
 with open("bot/config.yml", "r", encoding='utf-8') as file: #config.yml
     config = yaml.load(file)
 
-ver = ['0.0.1.3', '13/08/2021'] #versão atual do bot.
+ver = ['0.1.0.1', '23/06/2022'] #versão atual do bot.
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
 Prefix = config['Prefix']
@@ -45,7 +45,8 @@ async def on_message(message):
     usermention = str(message.author.mention) #menção do autor da mensagem
     user_message = str(message.content) # conteúdo da mensagem
     channel = str(message.channel.name) # nome do canal em que a mensagem foi enviada.
-    print(f'[' + time.strftime("%d/%m/%Y %H:%M:%S")+ ']'f'|({channel})| {username}: {user_message} ') #Log da mensagem do usuário!
+    guild__server = str(message.guild.name)
+    print(f'[' + time.strftime("%d/%m/%Y %H:%M:%S")+ ']'f'|[{guild__server}]|({channel})| {username}: {user_message} ') #Log da mensagem do usuário!
 
 
  #----------------------------COMANDOS DISCORD---------------------------------# 
