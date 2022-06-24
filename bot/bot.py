@@ -18,7 +18,7 @@ with open("bot/config.yml", "r", encoding='utf-8') as file: #config.yml
     config = yaml.load(file)
 
 ver = ['0.0.1.3', '13/08/2021'] #versão atual do bot.
-bot_token = os.getenv('DISCORD_TOKEN') #Token do bot
+bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
 Prefix = config['Prefix']
 client = commands.Bot(command_prefix=config['Prefix'], intents=discord.Intents.all()) #Definindo a variavel client, tendo como argumento o prefixo do comando.
