@@ -11,9 +11,6 @@ from discord.utils import get
 from discord.ext import commands
 import os
 from datetime import timezone
-import heroku
-
-cloud = heroku.from_key('69f09501-2788-4d43-b676-ba9f024d44be')
 
 
 yaml = YAML()
@@ -21,7 +18,7 @@ with open("config.yml", "r", encoding='utf-8') as file: #config.yml
     config = yaml.load(file)
 
 ver = ['0.0.1.3', '13/08/2021'] #versão atual do bot.
-#bot_token = os.getenv('DISCORD_TOKEN') #Token do bot
+bot_token = os.getenv('DISCORD_TOKEN') #Token do bot
 
 Prefix = config['Prefix']
 client = commands.Bot(command_prefix=config['Prefix'], intents=discord.Intents.all()) #Definindo a variavel client, tendo como argumento o prefixo do comando.
@@ -198,4 +195,4 @@ async def witchery(ctx):
         await ctx.send(embed=embed)
     
 
-client.run("OTgyNjE2MjY0NjMzNjQzMDM5.Gig84M.FbkKBWo5wQYsxQe4TvRUC8dV3RlnhR2Rw7YRI0")
+client.run(DDISCORD_TOKEN)
