@@ -170,7 +170,7 @@ async def embed(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command(aliases=['sauce'])
+@client.command(aliases=['sauce' , 'art'])
 async def avatar(ctx):
     embed=discord.Embed(title="Sorceress by Nibelart.")
     embed.set_image(url="https://cdna.artstation.com/p/assets/images/images/021/505/578/large/nibelart-sorceress-low.jpg?1571933437")
