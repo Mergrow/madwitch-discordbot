@@ -32,7 +32,7 @@ async def on_ready():
     print('Logado como {0.user} '  .format(client)) 
     print(f'Hoje é: ' + time.strftime("%d/%m/%Y %H:%M:%S") .format(client)) 
     print(f'Versão atual: {ver}\n '  .format(client)) 
-    await client.change_presence(activity=discord.Streaming(name="Primeiro Discordbot do Mergrow!")) # Atualiza o RPC do discordbot
+    await client.change_presence(activity=discord.Streaming(name='Primeiro Discordbot do Mergrow!', url='https://www.twitch.tv/mergrow_', status=discord.Status.idle)) # Atualiza o RPC do discordbot
 
 ownerid = 337651715677618176 #DiscordID do desenvolvedor 
 
