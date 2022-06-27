@@ -32,7 +32,7 @@ async def on_ready():
     print('Logado como {0.user} '  .format(client)) 
     print(f'Hoje é: ' + time.strftime("%d/%m/%Y %H:%M:%S") .format(client)) 
     print(f'Versão atual: {ver}\n '  .format(client)) 
-    await client.change_presence(activity=discord.Game(name="Primeiro Discordbot do Mergrow!")) # Atualiza o RPC do discordbot
+    await client.change_presence(activity=discord.Streaming(name="Primeiro Discordbot do Mergrow!")) # Atualiza o RPC do discordbot
 
 ownerid = 337651715677618176 #DiscordID do desenvolvedor 
 
@@ -200,6 +200,8 @@ async def witchery(ctx):
 async def host(ctx):
     embed = discord.Embed(title="Hosted on __**Heroku!**__", color=0xc034eb)
     await ctx.send(embed=embed)
-    
+
+
+
 
 client.run(bot_token)
