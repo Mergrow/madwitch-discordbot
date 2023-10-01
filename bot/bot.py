@@ -89,7 +89,7 @@ async def witchery(ctx):
 
 @client.command()
 async def host(ctx):
-    embed = discord.Embed(title="Hosted on __**Heroku!**__", color=0xc034eb)
+    embed = discord.Embed(title="Self-hosted", color=0xc034eb)
     await ctx.send(embed=embed)
 
 
