@@ -1,5 +1,4 @@
 from http import server
-from typing_extensions import Self
 import discord
 import time
 from discord.abc import GuildChannel
@@ -11,8 +10,6 @@ from discord.utils import get
 from discord.ext import commands
 from datetime import timezone
 import os
-
-
 
 
 yaml = YAML()

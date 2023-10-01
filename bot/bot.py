@@ -3,7 +3,7 @@ from cogs.embed import _embed
 from cogs.rpc import _rpc
 from cogs.move import _move
 from cogs.wakeup import _wakeup
-
+from cogs.twitch import *
 
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
@@ -15,7 +15,7 @@ async def on_ready():
     print(f'Hoje é: ' + time.strftime("%d/%m/%Y %H:%M:%S") .format(client)) 
     print(f'Versão atual: {ver}\n '  .format(client)) 
     await client.change_presence(activity=discord.Streaming(name='Primeiro Discordbot do Mergrow!', url='https://www.twitch.tv/mergrow_', status=discord.Status.idle)) # Atualiza o RPC do discordbot
-
+    check_streamer_status.start()
 
 @client.event                           #captura de mensagens nos canais de texto
 async def on_message(message): 
@@ -29,7 +29,7 @@ async def on_message(message):
     guild__server = str(message.guild.name)
     print(f'[' + time.strftime("%d/%m/%Y %H:%M:%S")+ ']'f'|[{guild__server}]|({channel})| {username}: {user_message} ') #Log da mensagem do usuário!
 
-
+    
  #----------------------------COMANDOS DISCORD---------------------------------# 
     if user_message.lower() == config['Prefix'] +'salve':                        
         await message.channel.send(f'Salve {usermention}')
@@ -45,6 +45,8 @@ async def on_message(message):
 
 
  #------------------------------------------------------------------------------# 
+
+
 
 
 @client.command(aliases=['stream','live']) #Exemplo uso de aliases
@@ -89,6 +91,8 @@ async def witchery(ctx):
 async def host(ctx):
     embed = discord.Embed(title="Hosted on __**Heroku!**__", color=0xc034eb)
     await ctx.send(embed=embed)
+
+
 
 client.add_cog(_embed(client))
 client.add_cog(_rpc(client))
