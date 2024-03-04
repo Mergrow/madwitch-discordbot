@@ -9,6 +9,7 @@ from ruamel.yaml import YAML
 from discord.utils import get
 from discord.ext import commands
 from datetime import timezone
+from discord import app_commands
 import os
 
 

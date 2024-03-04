@@ -7,6 +7,14 @@ from cogs.twitch import *
 
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
+
+client.add_cog(_embed(client))
+client.add_cog(_rpc(client))
+client.add_cog(_move(client))
+client.add_cog(_wakeup(client))
+
+
+
 @client.event               #evento no inicio do bot
 async def on_ready():
 
@@ -16,6 +24,16 @@ async def on_ready():
     print(f'Versão atual: {ver}\n '  .format(client)) 
     await client.change_presence(activity=discord.Streaming(name='Primeiro Discordbot do Mergrow!', url='https://www.twitch.tv/mergrow_', status=discord.Status.idle)) # Atualiza o RPC do discordbot
     check_streamer_status.start()
+    await client.tree.sync(guild=discord.Object(id=922349610771546112))
+    
+
+    
+#Slash commands
+
+@client.tree.command(name="hi", description="Say hi", guild=discord.Object(id=922349610771546112))   
+async def hi(ctx):
+    await ctx.response.send_message("Hello!")
+
 
 @client.event                           #captura de mensagens nos canais de texto
 async def on_message(message): 
@@ -31,6 +49,9 @@ async def on_message(message):
 
     
  #----------------------------COMANDOS DISCORD---------------------------------# 
+
+
+    
     if user_message.lower() == config['Prefix'] +'salve':                        
         await message.channel.send(f'Salve {usermention}')
 
@@ -58,7 +79,6 @@ async def twitch(message):
 @client.command(aliases=['versão','ver'])
 async def version(message):
     await message.send(f'```Versão: {ver}```')
-
 
 
 @client.command(aliases=['sauce' , 'art'])
@@ -93,9 +113,26 @@ async def host(ctx):
     await ctx.send(embed=embed)
 
 
+@client.command()
+async def servers(ctx):
+    # Obtém uma lista de guildas em que o bot está conectado
+    guilds = client.guilds
 
-client.add_cog(_embed(client))
-client.add_cog(_rpc(client))
-client.add_cog(_move(client))
-client.add_cog(_wakeup(client))
+    # Itera sobre todas as guildas e imprime seus nomes
+    for guild in guilds:
+        await ctx.send(guild.name)
+
+@client.command()
+async def invite(ctx, guild_name: str):
+    # Procura pelo nome da guilda fornecido nos servidores em que o bot está conectado
+    for guild in client.guilds:
+        if guild.name == guild_name:
+            # Obtém o primeiro canal de texto disponível na guilda
+            channel = guild.text_channels[0]
+            # Cria um convite para esse canal
+            invite = await channel.create_invite()
+            await ctx.send(f"Aqui está o convite para {guild.name}: {invite}")
+            return
+
+
 client.run(bot_token)

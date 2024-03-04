@@ -6,7 +6,7 @@ from cogs.variables import *
 
 CLIENT_ID = os.environ.get("twitch_client")
 CLIENT_SECRET = os.environ.get("twitch_secret")
-STREAMER_NAME = ["mergrow_", "nani_naniii", "binoia"]
+STREAMER_NAME = ["mergrow_", "nani_naniii"]
 CHECK_INTERVAL = "5"
 CHANNEL_ID = "962651845308874762"
 last_notification_times = {}
