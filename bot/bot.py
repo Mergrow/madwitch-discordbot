@@ -116,23 +116,31 @@ async def host(ctx):
 @client.command()
 async def servers(ctx):
     # Obtém uma lista de guildas em que o bot está conectado
-    guilds = client.guilds
+    user = ctx.message.author
+    if(user.id == ownerid):
+        guilds = client.guilds
 
-    # Itera sobre todas as guildas e imprime seus nomes
-    for guild in guilds:
-        await ctx.send(guild.name)
+        # Itera sobre todas as guildas e imprime seus nomes
+        for guild in guilds:
+            await ctx.send(guild.name)
+    else: 
+        embed = discord.Embed(title="No permission.", color=0xc034eb)
 
 @client.command()
 async def invite(ctx, guild_name: str):
     # Procura pelo nome da guilda fornecido nos servidores em que o bot está conectado
-    for guild in client.guilds:
-        if guild.name == guild_name:
-            # Obtém o primeiro canal de texto disponível na guilda
-            channel = guild.text_channels[0]
-            # Cria um convite para esse canal
-            invite = await channel.create_invite()
-            await ctx.send(f"Aqui está o convite para {guild.name}: {invite}")
-            return
+    user = ctx.message.author
+    if(user.id == ownerid):
+        for guild in client.guilds:
+            if guild.name == guild_name:
+                # Obtém o primeiro canal de texto disponível na guilda
+                channel = guild.text_channels[0]
+                # Cria um convite para esse canal
+                invite = await channel.create_invite()
+                await ctx.send(f"Here is the invite for {guild.name}: {invite}")
+                return
+    else: 
+        embed = discord.Embed(title="No permission.", color=0xc034eb)
 
 
 client.run(bot_token)
