@@ -63,3 +63,5 @@ async def check_streamer_status():
             
             # Atualize o horário da última notificação para o streamer
             last_notification_times[streamer] = current_time
+
+

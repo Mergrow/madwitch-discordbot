@@ -28,3 +28,8 @@ class _rpc(commands.Cog):
             time.sleep(3)
             await ctx.message.delete()
         else: return await ctx.send('Você não tem permissão para executar este comando!')
+
+
+        
+async def setup(client):
+    await client.add_cog(_rpc(client))

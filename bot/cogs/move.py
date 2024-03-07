@@ -16,3 +16,8 @@ class _move(commands.Cog):
         
         # move o usuario
         await member.move_to(channel)
+
+
+
+async def setup(client):
+    await client.add_cog(_move(client))

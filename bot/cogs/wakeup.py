@@ -49,3 +49,8 @@ class _wakeup(commands.Cog):
     async def woken_missing_role(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.MissingRole):
             await ctx.send('❌ É necessário ter a role **woken** para utilizar o wakeup!❌')
+
+
+
+async def setup(client):
+    await client.add_cog(_wakeup(client))            
