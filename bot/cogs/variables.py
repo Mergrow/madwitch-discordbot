@@ -11,7 +11,8 @@ from discord.ext import commands
 from datetime import timezone
 from discord import app_commands
 import os
-
+import logging
+import sys
 
 yaml = YAML()
 with open("bot/config.yml", "r", encoding='utf-8') as file: #config.yml

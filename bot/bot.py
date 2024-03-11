@@ -6,6 +6,8 @@ from cogs.wakeup import _wakeup
 from cogs.manager import _invite, _servers, _witchery
 from cogs.twitch import *
 
+
+
 bot_token = os.environ.get('DISCORD_TOKEN') #Token do bot
 
 #
@@ -15,6 +17,48 @@ async def load_extensions():
     await client.load_extension("cogs.rpc")
     await client.load_extension("cogs.move") 
     await client.load_extension("cogs.embed") 
+
+
+## Logging
+
+log_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs'))
+current_time = time.strftime("%d-%m-%Y %H-%M-%S")
+
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+
+
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename=os.path.join(log_directory, f"{current_time}.log"),
+                    filemode='w')
+
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(message)s')
+console_handler.setFormatter(formatter)
+
+# Adiciona o handler ao root logger
+logging.getLogger('').addHandler(console_handler)
+
+# Substitui sys.stdout para redirecionar a saída padrão para o logger
+class LoggerWriter:
+    def __init__(self, level):
+        self.level = level
+
+    def write(self, message):
+        if message != '\n':
+            logging.log(self.level, message)
+
+    def flush(self):
+        pass
+
+sys.stdout = LoggerWriter(logging.INFO)
+sys.stderr = LoggerWriter(logging.ERROR)
+
+###
 
 
 @client.event               #evento no inicio do bot
@@ -96,10 +140,6 @@ async def avatar(ctx):
 async def host(ctx):
     embed = discord.Embed(title="Self-hosted", color=0xc034eb)
     await ctx.send(embed=embed)
-
-
-
-
 
 
 
