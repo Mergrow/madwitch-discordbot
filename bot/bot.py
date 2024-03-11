@@ -21,7 +21,7 @@ async def load_extensions():
 
 ## Logging
 
-log_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'logs'))
+log_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), 'logs'))
 current_time = time.strftime("%d-%m-%Y %H-%M-%S")
 
 if not os.path.exists(log_directory):
