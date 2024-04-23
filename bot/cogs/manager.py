@@ -70,6 +70,9 @@ class _witchery(commands.Cog):
         else:
             embed = discord.Embed(title="You can't do Witchery! :)", color=0xc034eb)
             await ctx.send(embed=embed)
+
+
+            
     @commands.command()
     async def targetwitchery(self, ctx, server_id):
         user = ctx.message.author
