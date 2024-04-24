@@ -4,6 +4,8 @@ from cogs.variables import *
 class _move(commands.Cog): 
     def __init__(self, witch):
         self.witch = witch
+
+        
     @commands.command()
     async def move(self, ctx, member: discord.Member, *, channel_name):
         if member.voice is None:

@@ -1,12 +1,14 @@
 import pyttsx3
 import discord
 from discord.ext import commands
+import os
 
 engine = pyttsx3.init()
 
 class _tts(commands.Cog):
     def __init__(self, witch):
         self.witch = witch
+
 
     @commands.command()
     async def say(self, ctx, *, text):
@@ -21,14 +23,16 @@ class _tts(commands.Cog):
             else:
                 voice_client = await voice_channel.connect()
 
+            # Especifique o caminho completo onde o arquivo MP3 será salvo
+            save_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../audio/temp_audio.mp3'))
+            print(save_path)
             # Usa a biblioteca pyttsx3 para converter o texto em fala
-            engine.save_to_file(text, 'temp_audio.mp3')
+            engine.save_to_file(text, save_path)
             engine.runAndWait()
 
             # Reproduz o áudio gerado
-            source = discord.FFmpegPCMAudio('temp_audio.mp3')
+            source = discord.FFmpegPCMAudio(save_path)
             voice_client.play(source)
-
 
         else:
             await ctx.send('Você precisa estar em um canal de voz para usar esse comando!')
@@ -60,16 +64,6 @@ class _tts(commands.Cog):
 
         else:
             await ctx.send('Você precisa estar em um canal de voz para usar esse comando!')
-
-
-    @commands.command()
-    async def stop(self, ctx):
-        voice_client = ctx.voice_client
-        if voice_client and voice_client.is_playing():
-            voice_client.stop()
-            await ctx.send('Reprodução de áudio parada!')
-        else:
-            await ctx.send('Nenhum áudio está sendo reproduzido.')
 
          
 async def setup(client):

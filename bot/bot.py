@@ -5,6 +5,7 @@ from cogs.move import _move
 from cogs.wakeup import _wakeup
 from cogs.manager import _invite, _servers, _witchery
 from cogs.tts import _tts
+from cogs.music import _music
 from cogs.twitch import *
 
 
@@ -19,6 +20,7 @@ async def load_extensions():
     await client.load_extension("cogs.move") 
     await client.load_extension("cogs.embed") 
     await client.load_extension("cogs.tts")
+    await client.load_extension("cogs.music")
 
 
 ## Logging
