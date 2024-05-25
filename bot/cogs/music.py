@@ -74,5 +74,29 @@ class _music(commands.Cog):
         else:
             await ctx.send("Eu não estou conectado a um canal de voz.")
 
+
+    @commands.command()
+    async def song(self, ctx):
+        voice_channel = ctx.author.voice.channel
+        voice_client = ctx.voice_client
+        if voice_channel:
+            voice_client = ctx.voice_client
+            if voice_client:
+                if voice_client.is_connected():
+                    await voice_client.move_to(voice_channel)
+                else:
+                    voice_client = await voice_channel.connect()
+            else:
+                voice_client = await voice_channel.connect()
+
+            song_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../audio/song.mp3'))    
+
+            source = discord.FFmpegPCMAudio(song_path)
+            voice_client.play(source)
+
+        else:
+            await ctx.send('Você precisa estar em um canal de voz para usar esse comando!')
+
+
 async def setup(client):
     await client.add_cog(_music(client))
