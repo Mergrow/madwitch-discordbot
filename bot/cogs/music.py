@@ -1,101 +1,153 @@
+from ast import alias
 import discord
 from discord.ext import commands
-import yt_dlp
-from cogs.variables import *
-import os
+from youtubesearchpython import VideosSearch
+from yt_dlp import YoutubeDL
+import asyncio
 
+class _music(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+    
+        #all the music related stuff
+        self.is_playing = False
+        self.is_paused = False
 
-download_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '../audio'))
+        # 2d array containing [song, channel]
+        self.music_queue = []
+        self.YDL_OPTIONS = {'format': 'bestaudio/best'}
+        self.FFMPEG_OPTIONS = {'options': '-vn'}
 
-os.makedirs(download_directory, exist_ok=True)
+        self.vc = None
+        self.ytdl = YoutubeDL(self.YDL_OPTIONS)
 
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': os.path.join(download_directory, '%(extractor)s-%(id)s-%(title)s.%(ext)s'),
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
-    }],
-}
+     #searching the item on youtube
+    def search_yt(self, item):
+        if item.startswith("https://"):
+            title = self.ytdl.extract_info(item, download=False)["title"]
+            return{'source':item, 'title':title}
+        search = VideosSearch(item, limit=1)
+        return{'source':search.result()["result"][0]["link"], 'title':search.result()["result"][0]["title"]}
 
-ytdl = yt_dlp.YoutubeDL(ytdl_format_options)
+    async def play_next(self):
+        if len(self.music_queue) > 0:
+            self.is_playing = True
 
-class _music(commands.Cog): 
-    def __init__(self, witch):
-        self.witch = witch
+            #get the first url
+            m_url = self.music_queue[0][0]['source']
 
-    async def get_info(self, query):
-        with ytdl as ydl:
-            try:
-                info = ydl.extract_info(query, download=False)
-                return info
-            except Exception as e:
-                print(e)
-                return None
-
-# Tá quebrado essa porra n sei arrumar
-
-    @commands.command()
-    async def play(self, ctx, *, query):
-        voice_channel = ctx.author.voice.channel
-        voice_client = ctx.voice_client
-
-        if voice_channel:
-            try:
-
-                if not voice_client:
-                    voice_client = await voice_channel.connect() 
-                info = await self.get_info(query)
-                if info:
-                    url = info['formats'][0]['url']
-                    voice_client.play(discord.FFmpegPCMAudio(os.path.join(download_directory, 'song.mp3')))
-            except Exception as e:
-                print(e)
-                await ctx.send("Ocorreu um erro ao reproduzir a música.")
+            #remove the first element as you are currently playing it
+            self.music_queue.pop(0)
+            loop = asyncio.get_event_loop()
+            data = await loop.run_in_executor(None, lambda: self.ytdl.extract_info(m_url, download=False))
+            song = data['url']
+            self.vc.play(discord.FFmpegPCMAudio(song, executable= "ffmpeg.exe", **self.FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(), self.bot.loop))
         else:
-            await ctx.send("Você precisa estar em um canal de voz para usar este comando.")
+            self.is_playing = False
 
+    # infinite loop checking 
+    async def play_music(self, ctx):
+        if len(self.music_queue) > 0:
+            self.is_playing = True
 
-    @commands.command()
-    async def stop(self, ctx):
-        voice_client = ctx.message.guild.voice_client
-        if voice_client and voice_client.is_playing():
-            await voice_client.disconnect()
-        else:
-            await ctx.send("Eu não estou conectado a um canal de voz.")
+            m_url = self.music_queue[0][0]['source']
+            #try to connect to voice channel if you are not already connected
+            if self.vc == None or not self.vc.is_connected():
+                self.vc = await self.music_queue[0][1].connect()
 
-
-    @commands.command()
-    async def song(self, ctx):
-        voice_channel = ctx.author.voice.channel
-        voice_client = ctx.voice_client
-        if voice_channel:
-            voice_client = ctx.voice_client
-            if voice_client:
-                if voice_client.is_connected():
-                    await voice_client.move_to(voice_channel)
-                else:
-                    voice_client = await voice_channel.connect()
+                #in case we fail to connect
+                if self.vc == None:
+                    await ctx.send("```Não foi possivel entrar no canal de voz!```")
+                    return
             else:
-                voice_client = await voice_channel.connect()
-
-            song_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../audio/song.mp3'))    
-
-            source = discord.FFmpegPCMAudio(song_path)
-            voice_client.play(source)
+                await self.vc.move_to(self.music_queue[0][1])
+            #remove the first element as you are currently playing it
+            self.music_queue.pop(0)
+            loop = asyncio.get_event_loop()
+            data = await loop.run_in_executor(None, lambda: self.ytdl.extract_info(m_url, download=False))
+            song = data['url']
+            self.vc.play(discord.FFmpegPCMAudio(song, executable= "ffmpeg.exe", **self.FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(), self.bot.loop))
 
         else:
-            await ctx.send('Você precisa estar em um canal de voz para usar esse comando!')
+            self.is_playing = False
+
+    @commands.command(name="play", aliases=["p","playing"])
+    async def play(self, ctx, *args):
+        query = " ".join(args)
+        try:
+            voice_channel = ctx.author.voice.channel
+        except:
+            await ctx.send("```Você precisa estar em um canal de voz para usar esse comando!```")
+            return
+        if self.is_paused:
+            self.vc.resume()
+        else:
+            song = self.search_yt(query)
+            if type(song) == type(True):
+                await ctx.send("```Não foi possivel baixar a música. O formato pode estar errado. Verifique se o link não é uma playlist.```")
+            else:
+                if self.is_playing:
+                    await ctx.send(f"**#{len(self.music_queue)+2} - `{song['title']}`** adicionado à fila.")  
+                else:
+                    await ctx.send(f"**`{song['title']}`** adicionado à fila.")  
+                self.music_queue.append([song, voice_channel])
+                if self.is_playing == False:
+                    await self.play_music(ctx)
+
+    @commands.command(name="pause")
+    async def pause(self, ctx, *args):
+        if self.is_playing:
+            self.is_playing = False
+            self.is_paused = True
+            self.vc.pause()
+        elif self.is_paused:
+            self.is_paused = False
+            self.is_playing = True
+            self.vc.resume()
+
+    @commands.command(name = "resume", aliases=["r"])
+    async def resume(self, ctx, *args):
+        if self.is_paused:
+            self.is_paused = False
+            self.is_playing = True
+            self.vc.resume()
+
+    @commands.command(name="skip", aliases=["s"])
+    async def skip(self, ctx):
+        if self.vc != None and self.vc:
+            self.vc.stop()
+            #try to play next in the queue if it exists
+            await self.play_music(ctx)
+
+
+    @commands.command(name="queue", aliases=["q"])
+    async def queue(self, ctx):
+        retval = ""
+        for i in range(0, len(self.music_queue)):
+            retval += f"#{i+1} " + self.music_queue[i][0]['title'] + "\n"
+
+        if retval != "":
+            await ctx.send(f"**Fila:**\n```{retval}```")
+        else:
+            await ctx.send("Sem músicas na fila.")
+
+    @commands.command(name="clear", aliases=["c", "bin"])
+    async def clear(self, ctx):
+        if self.vc != None and self.is_playing:
+            self.vc.stop()
+        self.music_queue = []
+        await ctx.send("```Limpando a fila```")
+
+    @commands.command(name="stop", aliases=["disconnect", "l", "d"])
+    async def dc(self, ctx):
+        self.is_playing = False
+        self.is_paused = False
+        await self.vc.disconnect()
+    
+    @commands.command(name="remove")
+    async def re(self, ctx):
+        self.music_queue.pop()
+        await ctx.send("```Removendo a última música da fila```")
 
 
 async def setup(client):
